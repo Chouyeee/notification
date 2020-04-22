@@ -1,0 +1,23 @@
+{
+    "name": "ichen/notice-package",
+    "type": "library",
+    "license": "0.0.1",
+    "require": {
+        "nexmo/laravel": "^2.2",
+        "guzzlehttp/guzzle": "^6.5",
+        "ixudra/curl": "^6.19",
+        "laravel/framework": "^7.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ichen\\Notification\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ichen\\Notification\\NotificationServiceProvider"
+            ]
+        }
+    }
+}
