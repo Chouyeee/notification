@@ -14,6 +14,18 @@ line  sms notification package
 
 - 於.env新增相關設定
 
+        #mail服務設定
+        MAIL_MAILER=smtp
+        MAIL_HOST=smtp.gmail.com or other host
+        MAIL_PORT=587
+        MAIL_USERNAME=your mail account
+        MAIL_PASSWORD=your mail password
+        MAIL_ENCRYPTION=tls or other type
+        MAIL_FROM_ADDRESS=email address
+        MAIL_FROM_NAME="${APP_NAME}"
+
+        YOUR_EMAIL_NAME=email nickname ex:Ben
+
         #nexmo服務認證
         NEXMO_KEY= 
         NEXMO_SECRET=
