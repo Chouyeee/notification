@@ -1,5 +1,5 @@
 {
-    "name": "ichen/notice-package",
+    "name": "ichen/notification",
     "type": "library",
     "license": "0.0.1",
     "require": {

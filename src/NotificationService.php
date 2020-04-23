@@ -2,79 +2,31 @@
 
 namespace Ichen\Notification;
 
-use Log;
-use Mail;
-use Exception;
-use Illuminate\Support\Str;
-use Ixudra\Curl\Facades\Curl;
-use Nexmo\Laravel\Facade\Nexmo;
+use Ichen\Notification\Jobs\SendSmsJob;
+use Ichen\Notification\Jobs\SendMailJob;
+use Ichen\Notification\Jobs\SendLineJob;
 
 class NotificationService
 {
-    private $notification;
-
     public function __construct()
     {
         $this->notification = config('notification');
     }
 
-    public function line($message)
+    public function mailNotification(array $mailTo, $subject, $message, array $filePath = [], array $ccTo = [])
     {
-        $prefix = '<'.Str::random(6).'> ';
+        $mailFrom = $this->notification['mail'];
 
-        $status = -1;
-
-        try {
-            Log::info($prefix.'line bearer: '.$this->notification['line']['line_bearer'].' message: '.$message);
-
-            Curl::to('https://notify-api.line.me/api/notify')
-            ->withHeader('Authorization: Bearer '.$this->notification['line']['line_bearer'])
-            ->withContentType('application/x-www-form-urlencoded')
-            ->withData([ 'message' => $message ])
-            ->post();
-
-            return $status = 0;
-        } catch (Exception $e) {
-            Log::error($prefix.'line notification faill', [
-                'current_file' => __FILE__,
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ]);
-
-            return $status;
-        }
+        SendMailJob::dispatch($mailTo, $subject, $message, $filePath, $ccTo, $mailFrom);
     }
 
-    public function sms($phoneNumber, $message)
+    public function lineNotification($message)
     {
-        $prefix = '<'.Str::random(6).'> ';
+        SendLineJob::dispatch($this->notification['line']['line_bearer'], $message);
+    }
 
-        $status = -1;
-
-        try {
-            Log::info($prefix.'phone number: '.$phoneNumber.' message: '.$message);
-
-            if ($phoneNumber[0] == 0) {
-                $phoneNumber = substr($phoneNumber, 1);
-            }
-
-            Nexmo::message()->send([
-            'to' => '886'.$phoneNumber,
-            'from' => $this->notification['nexmo']['username'],
-            'text' => $message,
-            ]);
-
-            return $status = 0;
-        } catch (Exception $e) {
-            Log::error($prefix.'sms notification faill', [
-                'current_file' => __FILE__,
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ]);
-
-            return $status;
-        }
+    public function smsNotification(array $phoneNumber, $message)
+    {
+        SendSmsJob::dispatch($phoneNumber, $message, $this->notification['nexmo']['username']);
     }
 }
