@@ -42,7 +42,7 @@ class SendMailJob implements ShouldQueue
 
         Log::info($prefix.' send mail: ', [
             'mail_to' => $this->mailTo,
-            'subject' => $this->ccTo,
+            'subject' => $this->subject,
             'content' => $this->content,
             'file_path' => $this->filePath,
             'cc_to' => $this->ccTo,
